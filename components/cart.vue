@@ -2,14 +2,16 @@
   <div class="cart-container">
     <!-- Sepet İkonu -->
     <div
-      class="cart-icon"
+      class="cart-icon-container"
       @mouseenter="toggleCart(true)"
       @mouseleave="toggleCart(false)"
     >
-      <i class="fas fa-shopping-bag"></i>
-      <span v-if="cartStore.cartItems.length > 0" class="cart-count">
-        {{ cartStore.cartItems.length }}
-      </span>
+      <NuxtLink to="/cart" class="cart-icon">
+        <i class="fas fa-shopping-bag"></i>
+        <span v-if="cartStore.cartItems.length > 0" class="cart-count">
+          {{ cartStore.cartItems.length }}
+        </span>
+      </NuxtLink>
 
       <!-- Sepet Popup -->
       <div v-if="isCartOpen" class="cart-popup">
@@ -19,13 +21,22 @@
         </div>
         <div v-else class="cart-content">
           <ul class="cart-items">
-            <li v-for="item in sortedCartItems" :key="item.id" class="cart-item">
-              <img :src="item.image" alt="Ürün Görseli" class="cart-item-image" />
+            <li
+              v-for="item in sortedCartItems"
+              :key="item.id"
+              class="cart-item"
+            >
+              <img
+                :src="item.image"
+                alt="Ürün Görseli"
+                class="cart-item-image"
+              />
               <div class="cart-item-details">
                 <p class="item-name">{{ item.name }}</p>
                 <p class="item-quantity-price">
                   {{ item.quantity }} x {{ item.price.toFixed(2) }} ₺
                 </p>
+                <!-- Miktar Kontrolleri -->
                 <div class="quantity-controls">
                   <button @click="decreaseQuantity(item)">-</button>
                   <span>{{ item.quantity }}</span>
@@ -35,7 +46,9 @@
             </li>
           </ul>
           <div class="cart-total-section">
-            <p class="cart-total">Toplam: {{ cartStore.cartTotal.toFixed(2) }} ₺</p>
+            <p class="cart-total">
+              Toplam: {{ cartStore.cartTotal.toFixed(2) }} ₺
+            </p>
             <NuxtLink to="/cart" class="view-cart-button">Sepete Git</NuxtLink>
           </div>
         </div>
@@ -63,14 +76,14 @@ const sortedCartItems = computed(() =>
 
 // Miktar artırma/azaltma fonksiyonları
 const increaseQuantity = (item) => {
-  cartStore.addToCart(item);
+  cartStore.addToCart(item); // Miktar artırılır
 };
 
 const decreaseQuantity = (item) => {
   if (item.quantity > 1) {
-    item.quantity -= 1;
+    cartStore.decreaseQuantity(item.id); // Miktar azaltılır
   } else {
-    cartStore.removeFromCart(item.id);
+    cartStore.removeFromCart(item.id); // Miktar 1 ise ürün kaldırılır
   }
 };
 </script>
@@ -81,11 +94,17 @@ const decreaseQuantity = (item) => {
 }
 
 /* Sepet İkonu */
+.cart-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
 .cart-icon {
   font-size: 24px;
   color: #00a69c;
   position: relative;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .cart-count {
@@ -116,15 +135,6 @@ const decreaseQuantity = (item) => {
   overflow-y: auto; /* Kaydırma özelliği */
 }
 
-.cart-popup::-webkit-scrollbar {
-  width: 8px;
-}
-
-.cart-popup::-webkit-scrollbar-thumb {
-  background: #00a69c;
-  border-radius: 4px;
-}
-
 .cart-title {
   margin: 0;
   font-size: 16px;
@@ -139,12 +149,6 @@ const decreaseQuantity = (item) => {
   margin-top: 10px;
 }
 
-.cart-items {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
 .cart-item {
   display: flex;
   align-items: center;
@@ -153,8 +157,8 @@ const decreaseQuantity = (item) => {
 }
 
 .cart-item-image {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: 5px;
 }
@@ -170,7 +174,7 @@ const decreaseQuantity = (item) => {
 }
 
 .item-quantity-price {
-  font-size: 16px;
+  font-size: 12px;
   color: #888;
 }
 
@@ -192,7 +196,7 @@ const decreaseQuantity = (item) => {
 }
 
 .cart-total-section {
-  padding-top: 5px;
+  padding-top: 10px;
   border-top: 1px solid #ddd;
   text-align: center;
 }

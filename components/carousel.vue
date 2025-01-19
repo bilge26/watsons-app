@@ -1,13 +1,13 @@
 <template>
   <div class="carousel-container">
-    <div class="carousel" :style="{ transform: 'translateX(-${currentIndex * 100}%)' }">
+    <div class="carousel" :style="{ transform: `translateX(-${currentIndex * 100}%)` }">
       <!-- Her resim için link -->
       <div
         v-for="(image, index) in images"
         :key="index"
         class="carousel-slide"
       >
-        <router-link :to="'/carousel/${index + 1}'">
+        <router-link :to="`/carousel/${index + 1}`">
           <img :src="image" alt="Carousel Image" />
         </router-link>
       </div>
@@ -24,27 +24,28 @@ export default {
   data() {
     return {
       images: [
-        "https://www.watsons.com.tr/medias/sys_master/images/h3f/h21/11718974832670/WatsonsaOzelMarkalar/WatsonsaOzelMarkalar.png",
-        "https://www.watsons.com.tr/medias/sys_master/images/h0d/h2b/11718974570526/Pastel-app/Pastel-app.png",
-        "https://www.watsons.com.tr/medias/sys_master/images/he1/h63/11721966256158/YilbasiK_2-31Aralik_/YilbasiK-2-31Aralik-.png",
-        "https://www.watsons.com.tr/medias/sys_master/images/h13/h5a/11721966518302/YilbasiK_2Aralik_1Ocak_CoverB_2-1300-500/YilbasiK-2Aralik-1Ocak-CoverB-2-1300-500.png",
-        "https://www.watsons.com.tr/medias/sys_master/images/hea/h2d/11718975094814/WatsonsaOzelM_GobeBoost_2-8Aralik_CoverB-1300-500/WatsonsaOzelM-GobeBoost-2-8Aralik-CoverB-1300-500.png",
-        "https://www.watsons.com.tr/medias/sys_master/images/hb8/h37/11718975356958/surdurulabilir-yasam-12/surdurulabilir-yasam-12.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/hcf/h84/11925028241438/sli/sli.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/h2f/h8e/11918163410974/yilin-ilk-firsatlari/yilin-ilk-firsatlari.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/hb2/h83/11918163738654/yilin-ilk-firsatlari4/yilin-ilk-firsatlari4.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/he9/h54/11865753845790/sacfest/sacfest.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/h8d/hbc/11886133346334/ayin-urunleri-ocak/ayin-urunleri-ocak.png",
+        "https://www.watsons.com.tr/medias/sys_master/images/hc1/h97/11922646630430/mil/mil.png",
       ],
       currentIndex: 0, // Şu anda gösterilen resim
     };
   },
   methods: {
+    // Sonraki slayta geçiş
     nextSlide() {
       this.currentIndex = (this.currentIndex + 1) % this.images.length;
     },
+    // Önceki slayta geçiş
     prevSlide() {
       this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
     },
   },
 };
 </script>
-
 
 <style scoped>
 .carousel-container {

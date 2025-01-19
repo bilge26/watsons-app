@@ -49,6 +49,8 @@
 import { ref } from "vue";
 import { useAuthStore } from "~/stores/auth"; // Pinia'dan auth store'u çağırıyoruz
 
+const emit = defineEmits(["close"]); // emit tanımlandı
+
 const authStore = useAuthStore(); // Pinia store'u çağırıyoruz
 
 // Form verileri
@@ -86,7 +88,7 @@ const submitForm = async () => {
     // Popup'ı kapatma (isteğe bağlı)
     closePopup();
   } catch (error) {
-    errorMessage.value = "Giriş sırasında bir hata oluştu: " + error.message;
+    errorMessage.value = `Giriş sırasında bir hata oluştu: ${error.message}`;
     console.error("Giriş hatası:", error);
   }
 };

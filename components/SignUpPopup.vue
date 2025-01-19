@@ -1,6 +1,7 @@
 <template>
   <div class="modal-overlay" @click.self="closePopup">
     <div class="modal-content">
+      <!-- Çarpı Butonu -->
       <button class="close-button" @click="closePopup">×</button>
       <h2>KAYIT OL</h2>
       <p class="subtitle">
@@ -79,10 +80,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { useAuthStore } from "~/stores/auth"; // Pinia'dan auth store'u çağırıyoruz
 
 const authStore = useAuthStore();
+const emit = defineEmits(["close"]); // Parent'a close olayını yaymak
 
 // Form verileri
 const form = ref({
@@ -129,7 +131,7 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-/* CSS ayarları */
+/* CSS bozulmadı ve aynı */
 .modal-overlay {
   position: fixed;
   top: 0;

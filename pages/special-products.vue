@@ -100,12 +100,32 @@ const brands = ["9WISHES", "ANGIE", "AQUA DI POLO", "ARİFOĞLU EXC."];
 const categories = ["Yüz Makyajı", "Göz Makyajı", "Cilt Bakım"];
 
 const fetchProducts = async () => {
-  const querySnapshot = await getDocs(collection($firestore, "products"));
-  products.value = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  try {
+    const querySnapshot = await getDocs(collection($firestore, "products"));
+    products.value = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      // Eksik alanlar için varsayılan değerler atıyoruz
+      return {
+        id: doc.id,
+        name: data.name || "Bilinmeyen Ürün", // Varsayılan ürün ismi
+        price: typeof data.price === "number" ? data.price : 0, // Varsayılan fiyat
+        clubPrice: typeof data.clubPrice === "number" ? data.clubPrice : 0, // Varsayılan club fiyatı
+        image: data.image || "", // Varsayılan görsel
+        inStock: typeof data.inStock === "boolean" ? data.inStock : true, // Varsayılan stok durumu
+        isDiscounted: typeof data.isDiscounted === "boolean" ? data.isDiscounted : false, // Varsayılan indirim bilgisi
+      };
+    });
+
+    console.log("Products fetched successfully:", products.value);
+  } catch (error) {
+    console.error("Veri çekme hatası:", error);
+  }
 };
+
+
+
+
 
 const filteredProducts = computed(() => {
   return products.value.filter((product) => {
