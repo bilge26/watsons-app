@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import {
   getAuth,
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile,
-  createUserWithEmailAndPassword,
 } from "firebase/auth";
 import type { User } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 interface AuthState {
   user: User | null; // Firebase kullanıcı objesi
@@ -16,27 +16,25 @@ interface AuthState {
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
     user: null,
-    displayName: null,
+    displayName: null, // Kullanıcı adını saklayacak alan
   }),
   getters: {
     isAuthenticated: (state): boolean => !!state.user, // Kullanıcının oturum açıp açmadığını kontrol eder
   },
   actions: {
-    async signUp(email: string, password: string, displayName: string) {
+    async signUp(email: string, password: string) {
       const auth = getAuth();
+
       try {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        this.user = userCredential.user;
+        // Yeni kullanıcı oluştur
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Kullanıcı profiline isim ekle
-        await updateProfile(userCredential.user, { displayName });
-        this.displayName = displayName;
+        // Kullanıcı kaydedildi, ancak oturum açılmadı
+        console.log("Kayıt başarılı:", userCredential.user);
 
-        console.log("Kayıt başarılı:", this.user);
+        // Otomatik oturumu kapat
+        await signOut(auth);
+        this.user = null; // State'den kullanıcıyı kaldır
       } catch (error: any) {
         console.error("Kayıt hatası:", error.message);
         throw error;
@@ -44,16 +42,27 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async signIn(email: string, password: string) {
-      const auth = getAuth();
+      const auth = getAuth(); // Firebase Authentication instance
+      const firestore = getFirestore(); // Firestore instance
+
       try {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        // Kullanıcıyı giriş yap
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         this.user = userCredential.user;
-        this.displayName = userCredential.user.displayName || "Kullanıcı";
-        console.log("Giriş başarılı:", this.user);
+
+        console.log("Kullanıcı UID:", this.user?.uid);
+
+        // Firestore'dan displayName çek
+        const userRef = doc(firestore, "users", this.user.uid); // Firestore kullanıcı referansı
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          this.displayName = userDoc.data()?.displayName || "Kullanıcı";
+          console.log("Firestore'dan alınan kullanıcı adı:", this.displayName);
+        } else {
+          this.displayName = "Kullanıcı"; // Varsayılan isim
+          console.log("Firestore'da kullanıcı bulunamadı.");
+        }
       } catch (error: any) {
         console.error("Giriş hatası:", error.message);
         throw error;
@@ -64,8 +73,8 @@ export const useAuthStore = defineStore("auth", {
       const auth = getAuth();
       try {
         await signOut(auth);
-        this.user = null;
-        this.displayName = null;
+        this.user = null; // Kullanıcı bilgisini sıfırla
+        this.displayName = null; // DisplayName'i sıfırla
         console.log("Çıkış başarılı");
       } catch (error: unknown) {
         if (error instanceof Error) {

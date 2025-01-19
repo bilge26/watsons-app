@@ -1,33 +1,25 @@
 <template>
-  <div class="user-account-container" @click="toggleDropdown">
+  <div class="user-account-container">
     <!-- Kullanıcı Hesap İkonu -->
-    <div class="user-account">
+    <div class="user-account" @click="toggleDropdown">
       <i class="fas fa-user-circle"></i>
-      <span v-if="user">Merhaba, {{ user.displayName || "Hesabım" }}</span>
+      <span v-if="authStore.isAuthenticated">Merhaba, {{ authStore.displayName || "Kullanıcı" }}</span>
       <span v-else>Merhaba, Hesabım</span>
       <i class="fas fa-chevron-down"></i>
     </div>
 
     <!-- Dropdown Menü -->
     <div v-if="showDropdown" class="user-dropdown" @click.stop>
-      <button
-        v-if="!user"
-        @click="openSignIn"
-        class="dropdown-button primary"
-      >
+      <button v-if="!authStore.isAuthenticated" @click="openSignIn" class="dropdown-button primary">
         Oturum Aç
       </button>
-      <button v-if="user" @click="signOut" class="dropdown-button primary">
+      <button v-if="authStore.isAuthenticated" @click="signOut" class="dropdown-button primary">
         Çıkış Yap
       </button>
-      <button class="dropdown-button">Hesabım</button>
+      <button class="dropdown-button" @click="goToAccountPage">Hesabım</button>
       <button class="dropdown-button">Siparişlerim</button>
       <hr />
-      <button
-        v-if="!user"
-        @click="openSignUp"
-        class="dropdown-button secondary"
-      >
+      <button v-if="!authStore.isAuthenticated" @click="openSignUp" class="dropdown-button secondary">
         Kayıt
       </button>
     </div>
@@ -39,22 +31,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref } from "vue";
 import { useAuthStore } from "~/stores/auth"; // Auth Store
 import SignInPopup from "~/components/signinpopup.vue";
 import SignUpPopup from "~/components/SignUpPopup.vue";
+import { useRouter } from "vue-router"; // Router
 
 // Auth Store'u bağlayarak kullanıcı bilgisine ulaş
-const authStore = useAuthStore();
-const user = ref(null);
-
-// Kullanıcı oturum açınca state güncelleniyor
-onMounted(() => {
-  authStore.$subscribe((mutation, state) => {
-    user.value = state.user;
-  });
-  user.value = authStore.user;
-});
+const authStore = useAuthStore(); // Pinia'dan auth store'a erişim
+const router = useRouter(); // Router instance
 
 // Dropdown ve Modal görünürlük kontrolü
 const showDropdown = ref(false);
@@ -91,9 +76,8 @@ const closeSignUpModal = () => {
 };
 
 // Oturumu kapatma işlemi
-const signOut = () => {
-  authStore.signOut();
-  user.value = null;
+const signOut = async () => {
+  await authStore.signOut();
 };
 
 // Sayfanın başka bir yerine tıklanıldığında dropdown'ı kapat
@@ -101,19 +85,20 @@ const closeDropdownOnOutsideClick = () => {
   showDropdown.value = false;
 };
 
-// Tarayıcı ortamında çalışmasını sağla
-onMounted(() => {
-  if (process.client) {
-    window.addEventListener("click", closeDropdownOnOutsideClick);
-  }
-});
+if (process.client) {
+  window.addEventListener("click", closeDropdownOnOutsideClick);
+}
 
-onUnmounted(() => {
-  if (process.client) {
-    window.removeEventListener("click", closeDropdownOnOutsideClick);
+// Hesabım sayfasına yönlendirme veya SignIn açma
+const goToAccountPage = () => {
+  if (authStore.isAuthenticated) {
+    router.push("/account"); // Oturum açılmışsa Hesap sayfasına yönlendir
+  } else {
+    openSignIn(); // Oturum açılmamışsa SignIn popup'ı aç
   }
-});
+};
 </script>
+
 
 <style scoped>
 /* Kullanıcı Hesap Kapsayıcı */

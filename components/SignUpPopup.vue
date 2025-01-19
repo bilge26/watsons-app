@@ -48,17 +48,6 @@
             required
           />
         </div>
-        <div class="form-group">
-          <label for="phone">Telefon Numarası *</label>
-          <input
-            id="phone"
-            v-model="form.phone"
-            type="tel"
-            placeholder="05xx-xxx-xxxx"
-            pattern="[0-9]{10,11}"
-            required
-          />
-        </div>
         <div class="form-footer">
           <label>
             <input type="checkbox" />
@@ -92,7 +81,6 @@ const form = ref({
   lastName: "",
   email: "",
   password: "",
-  phone: "",
 });
 
 // Popup'ı kapatma fonksiyonu
@@ -110,18 +98,17 @@ const submitForm = async () => {
   errorMessage.value = "";
 
   try {
-    // Kullanıcıyı kayıt ediyoruz
-    await authStore.signUp(form.value.email, form.value.password);
-    successMessage.value = "Kullanıcı başarıyla oluşturuldu!";
+    // Kullanıcıyı kayıt ediyoruz (oturum açtırmadan)
+    await authStore.signUp(form.value.email, form.value.password, "");
+    successMessage.value = "Kullanıcı başarıyla oluşturuldu! Oturum açmak için giriş yapınız.";
     console.log("Kayıt başarılı:", form.value);
-    
+
     // Formu temizliyoruz
     form.value = {
       firstName: "",
       lastName: "",
       email: "",
       password: "",
-      phone: "",
     };
   } catch (error) {
     errorMessage.value = "Kayıt sırasında bir hata oluştu: " + error.message;
