@@ -5,7 +5,7 @@
       {{ notification }}
     </div>
 
-    <!-- Sol filtreleme bölümü -->
+     <!-- Sol filtreleme bölümü -->
     <div class="sidebar">
       <button class="reset-button" @click="resetFilters">Filtreleri Sıfırla</button>
 
