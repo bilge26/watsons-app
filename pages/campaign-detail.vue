@@ -1,7 +1,8 @@
+
 <template>
     <div class="campaign-detail-page">
-      <!-- Başlık -->
-      <h1>Kampanya Detayları</h1>
+       <!-- Başlık -->
+      <h1> Kampanya Detayları </h1>
       <section class="banner">
         <img
           src="https://www.watsons.com.tr/medias/sys_master/images/haa/hf5/11868731998238/800-400-kampanyalar/800-400-kampanyalar.png"

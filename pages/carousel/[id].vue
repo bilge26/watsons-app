@@ -1,11 +1,12 @@
+
 <template>
   <div class="page-container">
-    <!-- Bildirim Mesajı -->
+     <!-- Bildirim Mesajı -->
     <div v-if="notification" class="notification">
-      {{ notification }}
+       {{ notification }}
     </div>
 
-    <!-- Sol filtreleme bölümü -->
+      <!-- Sol filtreleme bölümü -->
     <div class="sidebar">
       <button class="reset-button" @click="resetFilters">Filtreleri Sıfırla</button>
 
@@ -28,7 +29,7 @@
       </div>
     </div>
 
-    <!-- Ürün listesi -->
+     <!-- Ürün listesi -->
     <div class="product-grid">
       <div
         class="product-card"
@@ -76,7 +77,7 @@ const fetchProducts2 = async () => {
     }));
     console.log("Products2 fetched:", products2.value);
   } catch (error) {
-    console.error("Firebase bağlantı hatası:", error);
+    console.error("Firebase  bağlantı hatası:", error);
   }
 };
 
@@ -152,7 +153,7 @@ onMounted(() => {
 .product-grid {
   flex: 3;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Her satırda 4 ürün */
+  grid-template-columns: repeat(4, 1fr);  /* Her satırda 4 ürün */
   gap: 20px;
 }
 
