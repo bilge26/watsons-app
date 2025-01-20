@@ -1,3 +1,4 @@
+// sepet sayfası
 <script setup lang="ts">
 import { useCartStore } from "~/stores/cart";
 
