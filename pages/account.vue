@@ -1,3 +1,4 @@
+<!--hesabım sayfası -->
 <template>
     <div class="account-page">
       <!-- Ana içerik -->

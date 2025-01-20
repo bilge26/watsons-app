@@ -5,7 +5,6 @@ import type { Firestore } from "firebase/firestore";
 // Firebase yapılandırması
 const firebaseConfig = {
 
-
   };
 
 
