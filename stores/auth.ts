@@ -1,3 +1,4 @@
+// auth.ts
 import { defineStore } from "pinia";
 import {
   getAuth,
@@ -7,6 +8,7 @@ import {
 } from "firebase/auth";
 import type { User } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { useCartStore } from "./cart"; // Cart store'u içe aktar
 
 interface AuthState {
   user: User | null; // Firebase kullanıcı objesi
@@ -71,10 +73,15 @@ export const useAuthStore = defineStore("auth", {
 
     async signOut() {
       const auth = getAuth();
+      const cartStore = useCartStore(); // Cart store'u çağır
+
       try {
         await signOut(auth);
         this.user = null; // Kullanıcı bilgisini sıfırla
         this.displayName = null; // DisplayName'i sıfırla
+
+        cartStore.clearCart(); // Kullanıcı oturumu kapattığında sepeti temizle
+
         console.log("Çıkış başarılı");
       } catch (error: unknown) {
         if (error instanceof Error) {

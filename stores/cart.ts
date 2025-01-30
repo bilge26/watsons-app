@@ -1,3 +1,4 @@
+// cart.ts
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth"; // Auth store'u içe aktar
 
